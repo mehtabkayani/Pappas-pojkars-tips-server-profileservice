@@ -1,74 +1,41 @@
 package com.pappaspojkars.tips.profileservice;
 
+import java.util.Iterator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.Length;
+public class UserViewable  {
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
-@Entity
-public class User implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    @NotNull
-    @Length(max=50)
     private String name;
-
-    @NotNull
-    @Length(max=100)
-    @Column(unique = true)
     private String email;
-
-    @NotNull
-    @Length(max = 100)
-
     private String password;
-
-    @NotNull
-    @Length(max = 20)
     private String phone;
-
-    @NotNull
-    @Length(max = 20)
-    @Column(unique = true)
     private String nickname;
-
-    @NotNull
     private Integer payStatus;
-    @NotNull
     private Long lastLogin;
-    @NotNull
     private String token;
-    @NotNull
     private Long tokenLastValidDate;
-    @NotNull
     private Integer attemptedLogins;
-    @NotNull
     private Long loginDeniedUntil;
 
-    public User() {
+    public UserViewable(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = "???";
+        this.phone = user.getPhone();
+        this.nickname = user.getNickname();
+        this.payStatus = user.getPayStatus();
+        this.lastLogin = user.getLastLogin();
+        this.token = user.getToken();
+        this.tokenLastValidDate = user.getTokenLastValidDate();
+        this.attemptedLogins =user.getAttemptedLogins();
+        this.loginDeniedUntil = user.getLoginDeniedUntil();
     }
 
-    public User(String name, String email, String password, String phone, String nickname) {
-        this.name = name;
-        this.email = email;
-
-        this.password = Utility.MD5Encode(password);
-        this.phone = phone;
-        this.nickname = nickname;
-
-        this.payStatus = 99;
-        this.lastLogin = 0L;
-        this.token = "";
-        this.tokenLastValidDate = 0L;
-        this.attemptedLogins =0;
-        this.loginDeniedUntil = 0L;
+    public UserViewable() {
     }
+
 
     public Integer getId() {
         return id;
@@ -168,10 +135,11 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserViewable{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", payStatus=" + payStatus +
@@ -182,6 +150,7 @@ public class User implements Serializable {
                 ", loginDeniedUntil=" + loginDeniedUntil +
                 '}';
     }
+
 
 
 }
