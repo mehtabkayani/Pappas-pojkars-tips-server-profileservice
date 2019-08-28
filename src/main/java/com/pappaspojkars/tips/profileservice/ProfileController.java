@@ -6,13 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDateTime;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -50,7 +45,7 @@ public class ProfileController {
 
 
        User oldUser = oUser.get();
-        System.out.println(oldUser.getToken());
+
         if(!token.equals(oldUser.getToken())){
             throw new RuntimeException("Token not valid");
         }
@@ -109,21 +104,67 @@ public class ProfileController {
        return userViewable;
     }
 
-    @PostMapping("/user")
-    public UserViewable addUser(@RequestBody User user){
-        String name = user.getName();
-        String email = user.getEmail();
-        String password = user.getPassword();
-        String phone = user.getPhone();
-        String nickname = user.getNickname();
+    //Delete check
 
-        //NULL CHECKS
+    @DeleteMapping("/user/{id}")
+    public User deleteUserById(String token, @PathVariable Integer id,@RequestBody User user){
 
-        User newUser = new User(name,email,password,phone,nickname);
-        user = profileRepo.save(newUser);
+        if(id != user.getId ()){
+            throw new RuntimeException("ID not authorized");
+        }
+        Optional<User> tempUser = profileRepo.findById(id);
 
-        UserViewable userViewable = new UserViewable(user);
-        System.out.println(userViewable);
-        return userViewable;
+        User oldUser = tempUser.get();
+
+        if(!token.equals(oldUser.getToken())){
+            throw new RuntimeException("Token is not valid");
+        }
+
+        Long checkTimeStamp = LocalDateTime.now().toEpochSecond(Utility.SERVER_OFFSET);
+        if(oldUser.getTokenLastValidDate() < checkTimeStamp){
+            throw new RuntimeException("Session timout");
+        }
+        if(oldUser.getPayStatus() != 99){
+            throw new RuntimeException("You are active in the game and can´t delete your account");
+        }
+         profileRepo.delete(oldUser);
+
+        return oldUser;
+
     }
+
+    @PutMapping("user/{id}/password")
+    public boolean changePassword(String token, String oldPassword, @PathVariable Integer id,@RequestBody User user){
+        if(id != user.getId()) {
+            throw  new RuntimeException("ID not authorized");
+        }
+         Optional<User> tempUser = profileRepo.findById(id);
+
+        User oldUser = tempUser.get();
+
+
+
+        Long checkTimeStamp = LocalDateTime.now().toEpochSecond(Utility.SERVER_OFFSET);
+        if(oldUser.getTokenLastValidDate() < checkTimeStamp){
+            throw new RuntimeException("Session timout");
+        }
+        if(!Utility.MD5Encode(oldPassword).equals(oldUser.getPassword())){
+            throw  new RuntimeException("Invalid old password");
+        }
+        if(!token.equals(oldUser.getToken())){
+            throw  new RuntimeException("Token is invalid");
+        }
+
+        if(user.getPassword().equals("")|| user.getPassword() == null){
+            throw new RuntimeException("Password can´t be left empty");
+        }
+
+
+        oldUser.setPassword(Utility.MD5Encode(user.getPassword()));
+        profileRepo.save(oldUser);
+
+        return true;
+    }
+
+
 }
