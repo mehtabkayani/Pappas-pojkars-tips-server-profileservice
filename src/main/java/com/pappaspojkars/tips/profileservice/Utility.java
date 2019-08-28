@@ -7,6 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utility {
 
@@ -61,19 +63,22 @@ public class Utility {
         return str.matches("^[a-zA-z ]*$");
     }
 
-//    public static boolean isValid(String token, Integer id){
-//
-//      Optional <User> selectedUser = profileRepo.findById(id);
-//        if(!selectedUser.isPresent()){
-//            return false;
-//        }
-//          User oldUser =  selectedUser.get();
-//        //Check if the user is already logged in
-//        if(oldUser)
-//        Long checkTimeStamp = LocalDateTime.now().toEpochSecond(Utility.SERVER_OFFSET);
-//        if(oldUser.getTokenLastValidDate() < checkTimeStamp){
-//            return false;
-//        }
-//        return true;
-//    }
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validateEmail(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+    }
+
+    public static final Pattern VALID_PHONE_REGEX =
+            Pattern.compile("^[0-9]{10,13}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validatePhone(String phoneStr) {
+        Matcher matcher = VALID_PHONE_REGEX .matcher(phoneStr);
+        return matcher.find();
+    }
+
+
 }
