@@ -1,19 +1,14 @@
 package com.pappaspojkars.tips.profileservice;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utility {
 
-    @Autowired
-   static ProfileRepo profileRepo;
+
 
     private static final String ALPHA_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     public static final Integer SECONDS_UNTIL_AUTOMATIC_LOGOUT = 15*60;

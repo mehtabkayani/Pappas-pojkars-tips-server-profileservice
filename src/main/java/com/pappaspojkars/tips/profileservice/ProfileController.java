@@ -99,7 +99,7 @@ public class ProfileController {
 
 
 
-       profileRepo.save(oldUser);
+        oldUser = profileRepo.save(oldUser);
        UserViewable userViewable = new UserViewable(oldUser);
        return userViewable;
     }
@@ -107,7 +107,7 @@ public class ProfileController {
     //Delete check
 
     @DeleteMapping("/user/{id}")
-    public User deleteUserById(String token, @PathVariable Integer id,@RequestBody User user){
+    public boolean deleteUserById(String token, @PathVariable Integer id,@RequestBody User user){
 
         if(id != user.getId ()){
             throw new RuntimeException("ID not authorized");
@@ -129,7 +129,7 @@ public class ProfileController {
         }
          profileRepo.delete(oldUser);
 
-        return oldUser;
+        return true;
 
     }
 
